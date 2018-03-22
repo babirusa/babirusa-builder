@@ -101,7 +101,7 @@ class BuildCommand extends Command
             foreach ($input->getArgument('versions') as $version) {
                 $io->section(sprintf('Building PHP version %s for %s platform', $version, $container->platform));
 
-                $tag = sprintf('php-%s-v%', $container->platform, $version);
+                $tag = sprintf('php-%s-%s', $container->platform, $version);
                 $docker = new DockerBuilder($container);
                 $image = $docker->build($tag, '-t', $tag, '-t', $tag, '--build-arg', 'PHP_VERSION=php-'.$version);
                 try {
