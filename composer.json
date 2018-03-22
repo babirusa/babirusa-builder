@@ -1,0 +1,23 @@
+{
+    "name": "babirusa/babirusa-builder",
+    "description": "Babirusa Runtime builder",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michal Przytulski",
+            "email": "open-source@przytulski.pl"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "symfony/console": "^4.0",
+        "knplabs/github-api": "^2.7",
+        "php-http/guzzle6-adapter": "^1.1",
+        "mprzytulski/docker-process": "^1.0"
+    },
+    "autoload": {
+        "psr-4": { "Babirusa\\": "src/Babirusa" }
+    },
+    "bin": ["bin/babirusa-builder"]
+}
