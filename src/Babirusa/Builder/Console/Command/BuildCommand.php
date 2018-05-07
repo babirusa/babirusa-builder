@@ -79,7 +79,7 @@ class BuildCommand extends Command
     }
 
     /**
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|null|void
      * @throws \Github\Exception\MissingArgumentException
@@ -89,7 +89,7 @@ class BuildCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        if ($input->hasOption('upload')) {
+        if ($input->getOption('upload')) {
             $helper = $this->getHelper('question');
             $question = new Question('Github token: ');
             $token = $helper->ask($input, $output, $question);
@@ -107,13 +107,15 @@ class BuildCommand extends Command
                 try {
                     $image->start();
                     $destination = 'php-' . $version;
-                    try {
-                        $image->extract('/php-src-php-' . $version . '/sapi/cli/php', $destination);
-                        $this->createRelease($output, $input->getOption('repository'), $image->getTag(), $destination);
-                    } finally {
-                        @unlink($destination);
+                    $image->extract('/php-src-php-' . $version . '/sapi/cli/php', $destination);
+                    if ($input->getOption('upload')) {
+                        $this->createRelease(
+                            $output,
+                            $input->getOption('repository'),
+                            $image->getTag(),
+                            $destination
+                        );
                     }
-
                 } finally {
                     $image->destroy();
                 }
@@ -151,7 +153,7 @@ class BuildCommand extends Command
                 try {
                     $api->assets()->remove($username, $repository, $asset['id']);
                 } catch (\Exception $e) {
-                    $output->getErrorOutput()->writeln('Filed to remove asset');
+                    $output->getErrorOutput()->writeln('Failed to remove asset');
                 }
             }
 
@@ -160,6 +162,8 @@ class BuildCommand extends Command
             );
         } catch (RuntimeException $e) {
             $output->getErrorOutput()->writeln($e->getMessage());
+        } finally {
+            @unlink($build);
         }
     }
 
